@@ -1,0 +1,54 @@
+services:
+
+  #compose frontend
+  frontend:
+    build:
+      context: ./frontend
+    container_name: react
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    environment:
+      - CHOKIDAR_USEPOLLING=true
+    restart: unless-stopped
+
+  #compose backend
+  backend:
+    build:
+      context: ./backend
+    container_name: spring
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./backend:/app
+    environment:
+      SPRING_DEVTOOLS_RESTART_ENABLED: "true"
+      SPRING_DEVTOOLS_REMOTE_SECRET: "123"
+
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL}
+      SPRING_DATASOURCE_USERNAME: ${SPRING_DATASOURCE_USERNAME}
+      SPRING_DATASOURCE_PASSWORD: ${SPRING_DATASOURCE_PASSWORD}
+
+      JWT_SECRET: ${JWT_SECRET}
+    depends_on:
+      - database
+    restart: unless-stopped
+  
+  #compose banco de dados
+  database:
+    image: postgres:16
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
