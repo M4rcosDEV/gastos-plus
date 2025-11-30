@@ -7,9 +7,8 @@ import com.auth0.jwt.exceptions.JWTVerificationException;
 import com.gastosplus.entity.User;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import java.time.Instant;
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
+
+import java.time.*;
 
 @Service
 public class JwtService {
@@ -47,9 +46,25 @@ public class JwtService {
         }
     }
 
+    public Instant getExpirationDateFromToken(String token) {
+        try {
+            Algorithm algorithm = Algorithm.HMAC256(secret);
+
+            var decoded = JWT.require(algorithm)
+                    .withIssuer("auth-api")
+                    .build()
+                    .verify(token);
+
+            return decoded.getExpiresAt().toInstant();
+
+        } catch (Exception exception) {
+            throw new RuntimeException("Error extracting token expiration.", exception);
+        }
+    }
+
     public Instant genExpirationDate() {
-        return LocalDateTime.now()
+        return ZonedDateTime.now(ZoneId.of("America/Sao_Paulo"))
                 .plusHours(8)
-                .toInstant(ZoneOffset.of("-03:00"));
+                .toInstant();
     }
 }

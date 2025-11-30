@@ -17,8 +17,8 @@ import java.math.BigDecimal;
 public class Account {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "account_name", length = 50, nullable = false)
     private String accountName;
@@ -26,13 +26,21 @@ public class Account {
     @Column(nullable = false)
     private BigDecimal balance = BigDecimal.ZERO;
 
+    private String color;
+
+    private String avatar;
+
+    @Column(columnDefinition = "TEXT")
+    private String observacao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    public Account(String accountName, BigDecimal balance, User user) {
+    public Account(String accountName, BigDecimal balance, String color, String avatar) {
         this.accountName = accountName;
         this.balance = balance;
-        this.user = user;
+        this.color = color;
+        this.avatar = avatar;
     }
 }

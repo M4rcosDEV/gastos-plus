@@ -1,4 +1,6 @@
 package com.gastosplus.dto.user;
 
-public record LoginResponseDTO(String token, UserDTO user) {
+import java.time.Instant;
+
+public record LoginResponseDTO(String token, Instant expiresIn, UserDTO user) {
 }

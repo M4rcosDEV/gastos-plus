@@ -1,4 +1,4 @@
-import { IconCirclePlusFilled, IconMail, type Icon } from "@tabler/icons-react"
+import { IconCirclePlusFilled, type Icon } from "@tabler/icons-react"
 
 import { useNavigate, useLocation } from "react-router-dom"
 
@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { DialogAddMovements } from "../dialogs/dialog-add-movement"
+import { DialogAddMovements } from "../dialogs/accounts/dialog-add-movement"
 import { useState } from "react"
 
 

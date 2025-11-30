@@ -5,6 +5,11 @@ import path from "path"
 
 // https://vite.dev/config/
 export default defineConfig({
+    server: {
+    allowedHosts: ['limousines-warned-not-habits.trycloudflare.com'],
+    port: 5173,
+    strictPort: true,
+  },
   plugins: [react(), tailwindcss()],
   resolve: {
     alias: {

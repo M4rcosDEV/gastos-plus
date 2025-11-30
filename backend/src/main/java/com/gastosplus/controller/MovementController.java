@@ -31,6 +31,11 @@ public class MovementController {
         return ResponseEntity.ok(movementsPage);
     }
 
+    @GetMapping("/last-months")
+    public ResponseEntity<?> lastMonths(@RequestParam Long userId, @RequestParam String type){
+        return ResponseEntity.ok(movementService.getLast6Months(userId, type));
+    }
+
     @PostMapping
     public ResponseEntity<String> newRegisterMovement(@RequestBody @Valid CreateMovementDTO data){
         movementService.registerMovement(data);

@@ -17,54 +17,56 @@ import {
   SidebarMenu,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
+import { useAuthStore } from "@/stores/authStore"
 
-const data = {
-  user: {
-    name: "Marcos Vinicius",
-    email: "marcos@gmail.com",
-    avatar: "/avatars/shadcn.jpg",
+const navData = [
+  {
+    title: "Dashboard",
+    url: "/",
+    icon: IconDashboard,
   },
-  navMain: [
-    {
-      title: "Dashboard",
-      url: "/",
-      icon: IconDashboard,
-    },
-    {
-      title: "Contas",
-      url: "/account",
-      icon: IconListDetails,
-    },
-    {
-      title: "Categorias",
-      url: "/category",
-      icon: IconCategory,
-    },
-    {
-      title: "Transferências",
-      url: "#",
-      icon: IconTransfer,
-    },
-    {
-      title: "Relatórios",
-      url: "#",
-      icon: IconChartBar,
-    },
-    
-  ],
-}
+  {
+    title: "Contas",
+    url: "/account",
+    icon: IconListDetails,
+  },
+  {
+    title: "Categorias",
+    url: "/category",
+    icon: IconCategory,
+  },
+  {
+    title: "Transferências",
+    url: "#",
+    icon: IconTransfer,
+  },
+  {
+    title: "Relatórios",
+    url: "#",
+    icon: IconChartBar,
+  },
+]
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const getUser = useAuthStore((state) => state.user)
+
+  const user = {
+    name: getUser?.name || "Usuário",
+    email: getUser?.email || "",
+    photoUrl: getUser?.photoUrl || "/avatars/shadcn.jpg",
+  }
+
   return (
     <Sidebar collapsible="offcanvas" {...props}>
       <SidebarHeader>
         <SidebarMenu>
           <SidebarMenuItem>
-            <NavUser user={data.user} />
+            <NavUser user={user} />
           </SidebarMenuItem>
         </SidebarMenu>
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
+        <NavMain items={navData} />
       </SidebarContent>
       <SidebarFooter>
         <NavFooter/>

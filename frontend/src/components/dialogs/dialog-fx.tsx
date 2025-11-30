@@ -9,6 +9,7 @@ import {
 import type { DialogProps } from "@/interfaces/DialogProps"
 import { IconCirclePlusFilled } from "@tabler/icons-react"
 import { useState } from "react"
+import type { persist } from "zustand/middleware"
 
 
 export function DialogFx({
@@ -18,7 +19,8 @@ export function DialogFx({
   description,
   children,
   footer,
-  maxWidth = "sm:max-w-md"
+  maxWidth = "sm:max-w-md",
+  persist,
 }:DialogProps) {
 
   const [shake, setShake] = useState(false)
@@ -32,13 +34,18 @@ export function DialogFx({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent 
         onInteractOutside={(e) => {
+          if(persist){
             e.preventDefault()     // impede fechar - OUT MODEL
             triggerShake()         // ativa animação
+          }
         }}
 
         onEscapeKeyDown={(e) => {
+          if(persist){
             e.preventDefault()     // impede fechar - ESCAPE
             triggerShake()         // ativa animação
+          }
+
         }}
           className={`${maxWidth} ${shake ? "animate-shake" : ""}`}
         >

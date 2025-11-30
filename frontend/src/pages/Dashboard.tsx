@@ -3,6 +3,7 @@ import { ChartAreaExpense } from "@/components/charts/chart-area-expense";
 import { ChartAreaIncome } from "@/components/charts/chart-area-income";
 
 export default function Dashboard() {
+
   return (
     <div className="flex flex-1 flex-col">
           <div className="@container/main flex flex-1 flex-col gap-2">
@@ -12,8 +13,8 @@ export default function Dashboard() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 px-4 lg:px-6 pb-6">
-            <ChartAreaIncome />
-            <ChartAreaExpense />
+              <ChartAreaIncome />
+              <ChartAreaExpense />
             </div>
           </div>
     </div>

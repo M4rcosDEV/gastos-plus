@@ -7,6 +7,7 @@ import com.gastosplus.entity.Account;
 import com.gastosplus.entity.Category;
 import com.gastosplus.entity.Movement;
 import com.gastosplus.enums.TypeMovement;
+import com.gastosplus.mapper.MovementMapper;
 import com.gastosplus.repository.AccountRepository;
 import com.gastosplus.repository.CategoryRepository;
 import com.gastosplus.repository.MovementRepository;
@@ -19,6 +20,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +33,8 @@ public class MovementService {
 
     private final CategoryRepository categoryRepository;
 
+    private final MovementMapper movementMapper;
+
     @Transactional
     public void registerMovement(CreateMovementDTO data) {
         Account account = accountRepository.findById(data.accountId())
@@ -38,14 +43,10 @@ public class MovementService {
         Category category = categoryRepository.findById(data.categoryId())
                 .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        Movement movement = new Movement(
-                data.valueMov(),
-                data.dateMov(),
-                data.paymentMethods(),
-                data.typeMov(),
-                account,
-                category
-        );
+        Movement movement = movementMapper.toEntity(data);
+
+        movement.setAccount(account);
+        movement.setCategory(category);
 
         movementRepository.save(movement);
 
@@ -63,6 +64,14 @@ public class MovementService {
         }else{
             throw new IllegalArgumentException("Type movement not supported");
         }
+    }
+
+    public List<Map<String, Object>> getLast6Months(Long userId, String type){
+
+        var teste = movementRepository.sumLast6MonthsByType(userId, type);
+        System.out.println("?>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
+        System.out.println(teste);
+        return teste;
     }
 
     public Page<MovementResponseDTO> findAllFilter(MovementFilterDTO filter, Pageable pageable){

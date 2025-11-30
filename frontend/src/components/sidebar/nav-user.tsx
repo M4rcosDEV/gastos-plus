@@ -12,21 +12,10 @@ import {
   AvatarFallback,
   AvatarImage,
 } from "@/components/ui/avatar"
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+
 import {
   SidebarMenu,
-  SidebarMenuButton,
   SidebarMenuItem,
-  SidebarTrigger,
-  useSidebar,
 } from "@/components/ui/sidebar"
 
 export function NavUser({
@@ -35,18 +24,17 @@ export function NavUser({
   user: {
     name: string
     email: string
-    avatar: string
+    photoUrl: string
   }
 }) {
-  const { isMobile } = useSidebar()
 
   return (
     <SidebarMenu>
       <SidebarMenuItem>
       <div className="flex items-center gap-3 p-2 rounded-lg">
-          <Avatar className="h-8 w-8 rounded-lg grayscale">
-          <AvatarImage src={user.avatar} alt={user.name} />
-          <AvatarFallback className="rounded-lg">AV</AvatarFallback>
+          <Avatar className="h-8 w-8 rounded-lg">
+            <AvatarImage src={user.photoUrl} alt={user.name} />
+            <AvatarFallback className="rounded-lg">AV</AvatarFallback>
           </Avatar>
 
           <div className="grid flex-1 text-left text-sm leading-tight">

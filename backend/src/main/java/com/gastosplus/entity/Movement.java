@@ -37,20 +37,33 @@ public class Movement {
     @Enumerated(EnumType.STRING)
     private TypeMovement typeMov;
 
+    @Column(columnDefinition = "TEXT")
+    private String observacao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
     private Account account;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id", nullable = false)
+    @JoinColumn(name = "category_id")
     private Category category;
 
-    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, Category category) {
+    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, Category category, String observacao) {
         this.valueMov = valueMov;
         this.dateMov = dateMov;
         this.paymentMethods = paymentMethods;
         this.typeMov = typeMov;
         this.account = account;
         this.category = category;
+        this.observacao = observacao;
+    }
+
+    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, String observacao) {
+        this.valueMov = valueMov;
+        this.dateMov = dateMov;
+        this.paymentMethods = paymentMethods;
+        this.typeMov = typeMov;
+        this.account = account;
+        this.observacao = observacao;
     }
 }

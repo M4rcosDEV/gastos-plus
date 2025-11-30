@@ -11,6 +11,6 @@ public record MovementResponseDTO(
         PaymentMethods paymentMethods,
         TypeMovement typeMovement,
         BigDecimal valueMov,
-        Long accountId,
+        String accountId,
         Long categoryId
 ) { }

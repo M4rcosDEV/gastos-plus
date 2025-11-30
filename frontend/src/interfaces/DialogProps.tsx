@@ -6,4 +6,5 @@ export interface DialogProps{
     children: React.ReactNode
     footer?: React.ReactNode
     maxWidth?: string
+    persist?: boolean
 }

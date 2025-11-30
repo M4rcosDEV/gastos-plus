@@ -31,6 +31,6 @@ public class UserController {
 
         User user = (User) auth.getPrincipal();
 
-        return "User authenticated: " + user;
+        return "User authenticated: " + user.getId();
     }
 }

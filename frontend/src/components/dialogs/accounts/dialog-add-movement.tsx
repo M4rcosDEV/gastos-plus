@@ -4,11 +4,11 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { DialogFx } from "@/components/dialogs/dialog-fx"
-import { SelectTypeMovement } from "../selects/select-type-movement"
+import { SelectTypeMovement } from "@/components/selects/select-type-movement"
 import { useState } from "react"
-import { DatePickerMovement } from "../datepicker/datepicker-movement"
-import { SelectCategory } from "../selects/select-category"
-import { SelectPaymentMethod } from "../selects/select-payment-method"
+import { DatePickerMovement } from "@/components/datepicker/datepicker-movement"
+import { SelectCategory } from "@/components/selects/select-category"
+import { SelectPaymentMethod } from "@/components/selects/select-payment-method"
 
 interface DialogAddMovements{
     open: boolean
@@ -27,6 +27,7 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
         title="Registrar Movimentação"
         description="Preencha os dados da movimentação."
         maxWidth="sm:max-w-2xl"
+        persist={true}
         footer={
         <>
             <Button variant="secondary" onClick={() => onOpenChange(false)}>
