@@ -6,10 +6,10 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import type { Category } from "@/interfaces/Category"
+import { categoryIcons } from "@/components/icons/icons"
 
 export const columns: ColumnDef<Category>[] = [
     {
@@ -17,6 +17,7 @@ export const columns: ColumnDef<Category>[] = [
         header: ({ column }) => (
             <Button
                 variant="ghost"
+                className="ml-4"
                 onClick={() =>
                     column.toggleSorting(column.getIsSorted() === "asc")
                 }
@@ -25,22 +26,17 @@ export const columns: ColumnDef<Category>[] = [
             <ArrowUpDown className="ml-2 h-4 w-4" />
             </Button>
         ),
-        cell: ({ row }) => <div>{row.getValue("name")}</div>
+        cell: ({ row }) => <div className="ml-4">{row.getValue("name")}</div>
     },
     {
-        accessorKey: "icone",
+        accessorKey: "icon",
         header: "Ícone",
         cell: ({ row }) => {
-            const color = row.getValue("icone") as string
+            const iconName = row.getValue("icon") as string;
+            const iconEntry = categoryIcons.find((i) => i.name === iconName);
+            const IconComponent = iconEntry?.icon;
+            return IconComponent ? <IconComponent size={20} /> : null;
 
-            return (
-            <div className="flex items-center gap-2">
-                <div
-                className="h-5 w-5 rounded-full"
-                style={{ backgroundColor: color }}
-                />
-            </div>
-            )
         }
     },
     
@@ -76,23 +72,17 @@ export const columns: ColumnDef<Category>[] = [
                 </DropdownMenuTrigger>
 
                 <DropdownMenuContent>
-            
+    
                     <DropdownMenuItem
-                    onClick={() => navigator.clipboard.writeText(category.id)}
-                    >
-                    Copiar ID
-                    </DropdownMenuItem>
-
-                    <DropdownMenuItem
-                    onClick={() => alert(`Editar categoria ${category.name}`)}
+                    onClick={() => alert(`Editar ${category.name}`)}
                     >
                     Editar
                     </DropdownMenuItem>
 
                     <DropdownMenuItem
-                    onClick={() => alert(`Excluir categoria ${category.name}`)}
+                    onClick={() => alert(`Desativar ${category.name}`)}
                     >
-                    Excluir
+                    Arquivar
                     </DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>

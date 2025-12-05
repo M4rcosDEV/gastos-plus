@@ -104,6 +104,7 @@ export function ChartAreaIncome() {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
+              padding={{ left: 2, right: 2 }} 
             />
             <ChartTooltip
               cursor={false}

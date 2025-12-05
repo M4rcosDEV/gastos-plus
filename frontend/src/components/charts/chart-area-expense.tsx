@@ -1,6 +1,6 @@
 "use client"
 
-import { ChartColumnDecreasing, InfoIcon, TrendingUp } from "lucide-react"
+import { ChartColumnDecreasing, InfoIcon} from "lucide-react"
 import { Area, AreaChart, CartesianGrid, XAxis } from "recharts"
 
 import {
@@ -32,7 +32,6 @@ type dataResponse = {
   total: number
 }
 
-
 const chartConfig = {
   despesas: {
     label: "Despesas",
@@ -46,6 +45,16 @@ export function ChartAreaExpense() {
   const [monthWin, setMonthWin] = useState<dataResponse>()
   const [fistMonth, setFistMonth] = useState<dataResponse>()
   const [lastMonth, setLastMonth] = useState<dataResponse>()
+
+  // const chartData = [
+  //   { month: "January", total: 186 },
+  //   { month: "February", total: 305 },
+  //   { month: "March", total: 237 },
+  //   { month: "April", total: 73 },
+  //   { month: "May", total: 209 },
+  //   { month: "June", total: 214 },
+  // ]
+
 
   useEffect(() => {
     if(!user) return 
@@ -64,22 +73,22 @@ export function ChartAreaExpense() {
     
   },[user])
 
-  useEffect(() => {
-    if (chartData.length === 0) return
+  // useEffect(() => {
+  //   if (chartData.length === 0) return
 
-    const monthWin = chartData.reduce((accumulator, currentValue) => {
-      if(currentValue.total >= accumulator.total){
-        return currentValue;
-      }
+  //   const monthWin = chartData.reduce((accumulator, currentValue) => {
+  //     if(currentValue.total >= accumulator.total){
+  //       return currentValue;
+  //     }
 
-      return accumulator;
-    })
+  //     return accumulator;
+  //   })
 
-    setMonthWin(monthWin);
-    setFistMonth(chartData[0]);
-    setLastMonth(chartData[chartData.length - 1]);
+  //   setMonthWin(monthWin);
+  //   setFistMonth(chartData[0]);
+  //   setLastMonth(chartData[chartData.length - 1]);
 
-  },[chartData])
+  // },[chartData])
 
     
   return (
@@ -107,6 +116,7 @@ export function ChartAreaExpense() {
               axisLine={false}
               tickMargin={8}
               tickFormatter={(value) => value.slice(0, 3)}
+              padding={{ left: 2, right: 2 }} 
             />
             <ChartTooltip
               cursor={false}
@@ -129,21 +139,24 @@ export function ChartAreaExpense() {
           </div>
         )}
       </CardContent>
-      <CardFooter>
+ <CardFooter>
         <div className="flex w-full items-start gap-2 text-sm">
           <div className="grid gap-2">
             <div className="flex items-end gap-2 leading-none font-medium">
               Maior despesa registrada em {monthWin ? monthWin.month : "—"}
-              <Tooltip>
-                <TooltipTrigger asChild>
-                  <InfoIcon size={12}/>
-                </TooltipTrigger>
-                <TooltipContent>
-                  <p>Valores iguais priorizam o mês mais recente.</p>
-                </TooltipContent>
-              </Tooltip>
+              {/* DESKTOP */}
+              <div className="hidden md:block">
+                <Tooltip>
+                  <TooltipTrigger asChild>
+                    <InfoIcon size={12} />
+                  </TooltipTrigger>
+                  <TooltipContent>
+                    <p>Valores iguais priorizam o mês mais recente.</p>
+                  </TooltipContent>
+                </Tooltip>
+              </div>
 
-                            {/* MOBILE */}
+              {/* MOBILE */}
               <div className="block md:hidden">
                 <Popover>
                   <PopoverTrigger asChild>
@@ -156,6 +169,7 @@ export function ChartAreaExpense() {
                   </PopoverContent>
                 </Popover>
               </div>
+
             </div>
             <div className="text-muted-foreground flex items-center gap-2 leading-none">
               {chartData.length >= 2 && fistMonth && lastMonth ? (

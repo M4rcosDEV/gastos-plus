@@ -21,12 +21,27 @@ public class Category {
     @Column(length = 50, nullable = false)
     private String name;
 
+    private String icon;
+
+    private String color;
+
+    @Column(columnDefinition = "TEXT")
+    private String observacao;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     public Category(String name, User user) {
         this.name = name;
+        this.user = user;
+    }
+
+    public Category(String name, String icon, String color, String observacao, User user) {
+        this.name = name;
+        this.icon = icon;
+        this.color = color;
+        this.observacao = observacao;
         this.user = user;
     }
 }

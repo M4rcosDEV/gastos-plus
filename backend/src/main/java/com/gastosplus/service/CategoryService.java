@@ -7,6 +7,8 @@ import com.gastosplus.repository.CategoryRepository;
 import com.gastosplus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -18,11 +20,22 @@ public class CategoryService {
     private final UserRepository userRepository;
 
     public void createCategory(CreateCategotyDTO data){
-        User user = userRepository.findById(data.userId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+
+        boolean categoryExists = categoryRepository
+                .existsByNameIgnoreCaseAndUserId(data.name(), user.getId());
+
+        if (categoryExists) {
+            throw new RuntimeException("O nome da conta já existe para este usuário.");
+        }
 
         Category category = new Category(
                 data.name(),
+                data.icon(),
+                data.color(),
+                data.observacao(),
                 user
         );
 

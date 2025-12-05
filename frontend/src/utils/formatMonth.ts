@@ -3,5 +3,5 @@ export function formatMonth(yyyyMM: string) {
 
   const date = new Date(Number(year), Number(month) - 1);
 
-  return date.toLocaleString("pt-BR", { month: "long" });
+  return date.toLocaleString("en-US", { month: "long" });
 }
