@@ -33,9 +33,11 @@ export const columns: ColumnDef<Category>[] = [
         header: "Ícone",
         cell: ({ row }) => {
             const iconName = row.getValue("icon") as string;
+            const color = row.getValue("color") as string;
             const iconEntry = categoryIcons.find((i) => i.name === iconName);
+    
             const IconComponent = iconEntry?.icon;
-            return IconComponent ? <IconComponent size={20} /> : null;
+            return IconComponent ? <IconComponent size={20} color={color} /> : null;
 
         }
     },

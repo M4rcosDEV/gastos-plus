@@ -1,5 +1,6 @@
 package com.gastosplus.service;
 
+import com.gastosplus.dto.category.CategoryDTO;
 import com.gastosplus.dto.category.CreateCategotyDTO;
 import com.gastosplus.entity.Category;
 import com.gastosplus.entity.User;
@@ -11,6 +12,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class CategoryService {
@@ -18,6 +21,27 @@ public class CategoryService {
     private final CategoryRepository categoryRepository;
 
     private final UserRepository userRepository;
+
+    public List<CategoryDTO> findCategories(){
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User user = (User) auth.getPrincipal();
+
+        List<Category> categories = categoryRepository.findAllByUserId(user.getId());
+
+        if(categories.isEmpty()){
+            throw new RuntimeException("No category entry for this user.");
+        }
+
+        return categories.stream()
+                .map(c -> new CategoryDTO(
+                        c.getId(),
+                        c.getName(),
+                        c.getIcon(),
+                        c.getColor(),
+                        c.getObservation()
+                ))
+                .toList();
+    }
 
     public void createCategory(CreateCategotyDTO data){
 
@@ -28,14 +52,14 @@ public class CategoryService {
                 .existsByNameIgnoreCaseAndUserId(data.name(), user.getId());
 
         if (categoryExists) {
-            throw new RuntimeException("O nome da conta já existe para este usuário.");
+            throw new RuntimeException("Categoria já está cadastrada.");
         }
 
         Category category = new Category(
                 data.name(),
                 data.icon(),
                 data.color(),
-                data.observacao(),
+                data.observation(),
                 user
         );
 

@@ -1,0 +1,85 @@
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Spinner } from "../ui/spinner";
+import { useEffect, useState } from "react";
+import { categoryService } from "@/services/categoryService";
+import type { Category } from "@/interfaces/Category";
+import { categoryIcons } from "../icons/icons";
+import type { Account } from "@/interfaces/Account";
+import { accountService } from "@/services/accountService";
+import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+
+interface SelectAccountProps{
+    onChange: (value:string) => void
+}
+
+export function SelectAccount({onChange}:SelectAccountProps) {
+    const [account, setAccount] = useState<Account[]>([]);
+    const [isLoading, setIsLoading] = useState<boolean>(false);
+
+    const loadAccounts = async () =>{
+        setIsLoading(true);
+
+        try {
+            const result = await accountService.getAllAccounts();
+            setAccount(result)
+        } catch (error) {
+            console.log(error)
+        }finally{
+            setIsLoading(false);
+        }
+    }
+
+    useEffect(() =>{
+        loadAccounts()
+    }, [])
+
+    return (
+        <Select onValueChange={onChange}>
+            <SelectTrigger className="w-full max-w-xs gap-2">
+                {isLoading ? (
+                <Spinner className="h-4 w-4 animate-spin" />
+                ) : (
+                <SelectValue placeholder="Selecione a conta" />
+                )}
+            </SelectTrigger>
+            {account.length > 0 ?
+                ( 
+                <SelectContent>
+                <SelectGroup>
+                    {account.map((item, index) => (
+                    <SelectItem key={index} value={String(item.id)}>
+                        <div className="flex items-center gap-2">
+                        <Avatar className="h-6 w-6">
+                            <AvatarImage src={item.avatar} alt={item.accountName} />
+                            <AvatarFallback>
+                            {item.accountName?.[0]?.toUpperCase()}
+                            </AvatarFallback>
+                        </Avatar>
+
+                        <span>{item.accountName}</span>
+                        </div>
+                    </SelectItem>
+                    ))}
+                </SelectGroup>
+                </SelectContent>
+                ) : (
+                    <SelectContent>
+                        <SelectGroup>
+                            <SelectItem disabled value="none">Sem conta</SelectItem>
+                        </SelectGroup>
+                    </SelectContent>
+                )
+
+            }
+
+
+        </Select>
+    )
+}

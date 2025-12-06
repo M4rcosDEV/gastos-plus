@@ -8,13 +8,24 @@ interface CategoryPayload {
 }
 
 export const categoryService = {
+    async getCategories() {
+        try {
+            const response = await api.get("/category"); 
+            return response.data;
+            
+        } catch (error) {
+            console.error("Error fetching categories:", error);
+            throw error;
+        }
+    },
+
     async createCategory(payload: CategoryPayload) {
         try {
             const response = await api.post("/category", payload);
             return response.data;
-        } catch (error) {
-            console.error("Error creating category:", error);
-            throw error;
+        } catch (error: any) {
+            console.error(error.response?.data);
+            throw error.response?.data;
         }
     }
 }

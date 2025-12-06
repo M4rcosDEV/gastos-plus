@@ -23,6 +23,9 @@ public class Movement {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(name = "description")
+    private String description;
+
     @Column(name = "value_mov", length = 50, nullable = false)
     private BigDecimal valueMov = BigDecimal.ZERO;
 
@@ -38,7 +41,7 @@ public class Movement {
     private TypeMovement typeMov;
 
     @Column(columnDefinition = "TEXT")
-    private String observacao;
+    private String observation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "account_id", nullable = false)
@@ -48,22 +51,23 @@ public class Movement {
     @JoinColumn(name = "category_id")
     private Category category;
 
-    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, Category category, String observacao) {
+    public Movement(String description, BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, Category category, String observation) {
+        this.description = description;
         this.valueMov = valueMov;
         this.dateMov = dateMov;
         this.paymentMethods = paymentMethods;
         this.typeMov = typeMov;
         this.account = account;
         this.category = category;
-        this.observacao = observacao;
+        this.observation = observation;
     }
 
-    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, String observacao) {
+    public Movement(BigDecimal valueMov, LocalDate dateMov, PaymentMethods paymentMethods, TypeMovement typeMov, Account account, String observation) {
         this.valueMov = valueMov;
         this.dateMov = dateMov;
         this.paymentMethods = paymentMethods;
         this.typeMov = typeMov;
         this.account = account;
-        this.observacao = observacao;
+        this.observation = observation;
     }
 }

@@ -12,6 +12,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 
 public record CreateMovementDTO(
+        String description,
 
         @NotNull(message = "The transaction value is mandatory.")
         @Positive(message = "The value must be positive.")
@@ -27,5 +28,5 @@ public record CreateMovementDTO(
 
         String accountId,
 
-        String observacao
+        String observation
 ) { }

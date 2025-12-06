@@ -26,7 +26,7 @@ public class Category {
     private String color;
 
     @Column(columnDefinition = "TEXT")
-    private String observacao;
+    private String observation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
@@ -37,11 +37,11 @@ public class Category {
         this.user = user;
     }
 
-    public Category(String name, String icon, String color, String observacao, User user) {
+    public Category(String name, String icon, String color, String observation, User user) {
         this.name = name;
         this.icon = icon;
         this.color = color;
-        this.observacao = observacao;
+        this.observation = observation;
         this.user = user;
     }
 }

@@ -11,9 +11,13 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-export function DatePickerMovement() {
+interface DatePickerMovementProps {
+  value: Date | undefined
+  onChange: (date: Date | undefined) => void
+}
+
+export function DatePickerMovement({value, onChange}: DatePickerMovementProps) {
   const [open, setOpen] = React.useState(false)
-  const [date, setDate] = React.useState<Date | undefined>(undefined)
 
   return (
     <div className="flex flex-col gap-3">
@@ -24,17 +28,17 @@ export function DatePickerMovement() {
             id="date"
             className="w-full max-w-xs justify-between font-normal"
           >
-            {date ? date.toLocaleDateString() : "Selecione a data"}
+            {value ? value.toLocaleDateString() : "Selecione a data"}
             <ChevronDownIcon />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-auto overflow-hidden p-0" align="start">
           <Calendar
             mode="single"
-            selected={date}
+            selected={value}
             captionLayout="dropdown"
             onSelect={(date) => {
-              setDate(date)
+              onChange(date)
               setOpen(false)
             }}
           />

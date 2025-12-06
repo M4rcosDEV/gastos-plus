@@ -43,8 +43,8 @@ export function DialogAddCategory({ open, onOpenChange, onCreated }: DialogAddCa
 
     const payload = {
       name: categoryName,
-      icon: color || undefined,
-      color: icon || undefined,
+      icon: icon || undefined,
+      color: color || undefined,
       observacao: observacao || undefined,
     }
 
@@ -54,13 +54,15 @@ export function DialogAddCategory({ open, onOpenChange, onCreated }: DialogAddCa
       if (onCreated) {
         onCreated?.();
       }
+      console.log(payload)
       toast.success("Conta criada com sucesso!");
-    } catch (error:any) {
+      closeDialog()
+    } catch (error:any) { 
       console.error("Error creating category:", error)
       toast.error(error.message || "Erro ao criar categoria.");
     }
 
-    closeDialog()
+
   }
 
   const closeDialog = () => {

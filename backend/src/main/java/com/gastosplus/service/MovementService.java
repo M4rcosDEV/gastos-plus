@@ -79,6 +79,7 @@ public class MovementService {
 
         return movementRepository.findAll(spec, pageable)
                 .map(movement -> new MovementResponseDTO(
+                        movement.getDescription(),
                         movement.getDateMov(),
                         movement.getPaymentMethods(),
                         movement.getTypeMov(),

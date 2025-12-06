@@ -57,12 +57,14 @@ public class AccountService {
         accountRepository.save(account);
 
         Movement initialMove = new Movement(
+                "Saldo inicial",
             data.balance(),
             LocalDate.now(),
             PaymentMethods.DINHEIRO,
             TypeMovement.INITIAL,
             account,
-            "Saldo inicial"
+                null,
+                "Conta carteira criada default"
         );
 
         movementRepository.save(initialMove);

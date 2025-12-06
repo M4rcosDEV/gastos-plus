@@ -31,7 +31,7 @@ public class Account {
     private String avatar;
 
     @Column(columnDefinition = "TEXT")
-    private String observacao;
+    private String observation;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)

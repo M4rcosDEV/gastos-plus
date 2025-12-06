@@ -16,6 +16,10 @@ public class MovementSpecs {
 
             List<Predicate> predicates = new ArrayList<>();
 
+            if (filter.description() != null && !filter.description().isEmpty()) {
+                predicates.add(cb.like(cb.lower(root.get("description")), "%" + filter.description().toLowerCase() + "%"));
+            }
+
             if (filter.date() != null) {
                 predicates.add(cb.equal(root.get("dateMov"), filter.date()));
             }

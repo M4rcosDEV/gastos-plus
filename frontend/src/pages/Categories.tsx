@@ -5,15 +5,19 @@ import { Button } from "@/components/ui/button";
 import { PlusCircle, SearchIcon, type LucideIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import type { ColumnFiltersState, VisibilityState } from "@tanstack/react-table";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
 import IconSelector from "@/components/icons/icon-picker";
 import { DialogAddCategory } from "@/components/dialogs/categories/dialog-add-category";
+import { categoryService } from "@/services/categoryService";
 
 
 export default function Categories() {
+  const [categories, setCategories] = useState<Category[]>([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [icon, setIcon] = useState<string | null>(null);
   
@@ -35,16 +39,26 @@ export default function Categories() {
   };
 
   const handleAddCategory = () => {
-      console.log("Abrir modal/formulário para adicionar nova categoria.");
+      loadData();
   };
-    
-  const data: Category[] = [
-    { id: "1", name: "Alimentação", icon:"star", color:"#eb4034" , observacao: "expense" },
-    { id: "2", name: "Transporte", icon:"shirt",  color:"#eb4034" , observacao: "expense" },
-    { id: "3", name: "Moradia", icon:"car",  color:"#eb4034" , observacao: "expense" },
-    { id: "4", name: "Salário", icon:"bone",  color:"#eb4034" , observacao: "income" },
-    { id: "5", name: "Investimentos", icon:"star",  color:"#eb4034" , observacao: "income"},
-  ]
+  
+  const loadData = async () => {
+    setIsLoading(true); 
+
+    try {
+      const data = await categoryService.getCategories();
+      setCategories(data);
+ 
+    } catch (error) {
+      console.error("error loading categories:", error)
+    }finally{
+      setIsLoading(false);
+    }
+  }
+
+  useEffect(() => {
+    loadData();
+  }, []);
 
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto"> 
@@ -85,7 +99,9 @@ export default function Categories() {
       {/* Componente principal da Tabela */}
       <DataTable 
           columns={columns} 
-          data={data} 
+          data={categories}
+          create={() => setOpenAddDialog(true)}
+          isLoading={isLoading}
       />     
 
       <DialogAddCategory open={openAddDialog} onOpenChange={setOpenAddDialog} onCreated = {handleAddCategory}/>
