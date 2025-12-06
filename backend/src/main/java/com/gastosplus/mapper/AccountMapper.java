@@ -9,8 +9,5 @@ import org.mapstruct.NullValuePropertyMappingStrategy;
 
 @Mapper(componentModel = "spring", nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface AccountMapper {
-
-    Account toEntity(CreateAccountDTO dto);
-
     void updateAccountFromDto(UpdateAccountDTO dto, @MappingTarget Account account);
 }
