@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar"
-import { DialogAddMovements } from "../dialogs/accounts/dialog-add-movement"
+import { DialogAddMovements } from "../dialogs/movement/dialog-add-movement"
 import { useState } from "react"
 
 

@@ -11,12 +11,12 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover"
 
-interface DatePickerMovementProps {
+interface DatePickerProps {
   value: Date | undefined
   onChange: (date: Date | undefined) => void
 }
 
-export function DatePickerMovement({value, onChange}: DatePickerMovementProps) {
+export function DatePickerMovement({value, onChange}: DatePickerProps) {
   const [open, setOpen] = React.useState(false)
 
   return (
@@ -36,7 +36,6 @@ export function DatePickerMovement({value, onChange}: DatePickerMovementProps) {
           <Calendar
             mode="single"
             selected={value}
-            captionLayout="dropdown"
             onSelect={(date) => {
               onChange(date)
               setOpen(false)

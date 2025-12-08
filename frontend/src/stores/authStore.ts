@@ -1,4 +1,4 @@
-import { loginService } from "@/services/authService";
+import { authService } from "@/services/authService";
 import {create} from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -29,7 +29,7 @@ export const useAuthStore = create<AuthState>()(
         set({ loading: true });
 
         try {
-          const data = await loginService(email, password);
+          const data = await authService.login(email, password);
 
           set({
             user: data.user,

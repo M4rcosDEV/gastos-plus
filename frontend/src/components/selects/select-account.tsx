@@ -8,9 +8,6 @@ import {
 } from "@/components/ui/select"
 import { Spinner } from "../ui/spinner";
 import { useEffect, useState } from "react";
-import { categoryService } from "@/services/categoryService";
-import type { Category } from "@/interfaces/Category";
-import { categoryIcons } from "../icons/icons";
 import type { Account } from "@/interfaces/Account";
 import { accountService } from "@/services/accountService";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";

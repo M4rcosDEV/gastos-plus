@@ -6,9 +6,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import type { MovementType } from "@/types/movementType.enum"
 
 interface SelectTypeMovementProps{
-    onChange: (value:string) => void
+    onChange: (value:MovementType) => void
 }
 
 export function SelectTypeMovement({onChange}:SelectTypeMovementProps) {

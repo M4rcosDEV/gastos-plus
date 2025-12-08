@@ -19,10 +19,11 @@ import {
 } from '@/components/ui/chart'
 import { useAuthStore } from "@/stores/authStore"
 import { useEffect, useState } from "react"
-import { getLast6Months } from "@/services/dashboardService"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { Button } from "../ui/button"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { movementService } from "@/services/movementService"
+import { useMovementStore } from "@/stores/movementStore"
 
 export const description = "A simple area chart"
 
@@ -40,18 +41,19 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function ChartAreaIncome() {
-  const user = useAuthStore((state) => state.user)
+  const userId = useAuthStore((state) => state.user?.id)
   const [chartData, setChartData] = useState<dataResponse[]>([])
   const [monthWin, setMonthWin] = useState<dataResponse>()
   const [fistMonth, setFistMonth] = useState<dataResponse>()
   const [lastMonth, setLastMonth] = useState<dataResponse>()
-
+  const reloadIncome = useMovementStore((state) => state.reloadIncome)
+  
   useEffect(() => {
-    if(!user) return 
+    if(!userId) return 
     async function loadData() {
       try {
-        const data = await getLast6Months(user.id, "INCOME")
-        
+        const data = await movementService.getLast6Months(userId, "INCOME")
+        console.log("Grafico recarregado - INCOME")
         setChartData(data)
       } catch (error) {
         console.error("Erro ao carregar gráfico:", error)
@@ -60,7 +62,7 @@ export function ChartAreaIncome() {
 
     loadData()
     
-  },[user])
+  },[userId, reloadIncome])
 
   useEffect(() => {
     if (chartData.length === 0) return

@@ -13,7 +13,7 @@ import type { Category } from "@/interfaces/Category";
 import { categoryIcons } from "../icons/icons";
 
 interface SelectCategoryProps{
-    onChange: (value:string) => void
+    onChange: (value:number) => void
 }
 
 export function SelectCategory({onChange}:SelectCategoryProps) {
@@ -38,7 +38,7 @@ export function SelectCategory({onChange}:SelectCategoryProps) {
     }, [])
 
     return (
-        <Select onValueChange={onChange}>
+        <Select onValueChange={(value) => onChange(Number(value))}>
             <SelectTrigger className="w-full max-w-xs gap-2">
                 {isLoading ? (
                 <Spinner className="h-4 w-4 animate-spin" />

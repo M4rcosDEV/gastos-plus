@@ -18,14 +18,13 @@ import {
   ChartTooltipContent,
 } from '@/components/ui/chart'
 import { useAuthStore } from "@/stores/authStore"
-import { getLast6Months } from "@/services/dashboardService"
 import { useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
+import { movementService } from "@/services/movementService"
+import { useMovementStore } from "@/stores/movementStore"
 
 export const description = "A simple area chart"
-
-
 
 type dataResponse = {
   month: string,
@@ -40,29 +39,20 @@ const chartConfig = {
 } satisfies ChartConfig
 
 export function ChartAreaExpense() {
-  const user = useAuthStore((state) => state.user)
+  const userId = useAuthStore((state) => state.user?.id)
   const [chartData, setChartData] = useState<dataResponse[]>([])
   const [monthWin, setMonthWin] = useState<dataResponse>()
   const [fistMonth, setFistMonth] = useState<dataResponse>()
   const [lastMonth, setLastMonth] = useState<dataResponse>()
-
-  // const chartData = [
-  //   { month: "January", total: 186 },
-  //   { month: "February", total: 305 },
-  //   { month: "March", total: 237 },
-  //   { month: "April", total: 73 },
-  //   { month: "May", total: 209 },
-  //   { month: "June", total: 214 },
-  // ]
-
+  const reloadExpense = useMovementStore((state) => state.reloadExpense)
 
   useEffect(() => {
-    if(!user) return 
+    if(!userId) return 
 
     async function loadData() {
       try {
-        const data = await getLast6Months(user.id, "EXPENSE")
-        console.log("Dados do gráfico de despesas:", data)
+        const data = await movementService.getLast6Months(userId, "EXPENSE")
+        console.log("Grafico recarregado - EXPENSE")
         setChartData(data)
       } catch (error) {
         console.error("Erro ao carregar gráfico:", error)
@@ -71,24 +61,24 @@ export function ChartAreaExpense() {
 
     loadData()
     
-  },[user])
+  },[userId, reloadExpense])
 
-  // useEffect(() => {
-  //   if (chartData.length === 0) return
+  useEffect(() => {
+    if (chartData.length === 0) return
 
-  //   const monthWin = chartData.reduce((accumulator, currentValue) => {
-  //     if(currentValue.total >= accumulator.total){
-  //       return currentValue;
-  //     }
+    const monthWin = chartData.reduce((accumulator, currentValue) => {
+      if(currentValue.total >= accumulator.total){
+        return currentValue;
+      }
 
-  //     return accumulator;
-  //   })
+      return accumulator;
+    })
 
-  //   setMonthWin(monthWin);
-  //   setFistMonth(chartData[0]);
-  //   setLastMonth(chartData[chartData.length - 1]);
+    setMonthWin(monthWin);
+    setFistMonth(chartData[0]);
+    setLastMonth(chartData[chartData.length - 1]);
 
-  // },[chartData])
+  },[chartData])
 
     
   return (
