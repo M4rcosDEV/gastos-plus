@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,13 +36,24 @@ public class MovementService {
 
     private final MovementMapper movementMapper;
 
+    // @Scheduled(cron = "0 * * * * *", zone = "America/Sao_Paulo")
+    @Scheduled(cron = "0 0 0,12 * * *", zone = "America/Sao_Paulo") // 00:00 e 12:00
+    public void processarMovimentosFuturos() {
+        System.out.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>><<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
+        System.out.println("Processando movimentos futuros...");
+    }
+
     @Transactional
     public void registerMovement(CreateMovementDTO data) {
         Account account = accountRepository.findById(data.accountId())
                 .orElseThrow(() -> new RuntimeException("Account not found"));
 
-        Category category = categoryRepository.findById(data.categoryId())
-                .orElseThrow(() -> new RuntimeException("Category not found"));
+        Category category = null;
+
+        if(data.categoryId() != null){
+            category = categoryRepository.findById(data.categoryId())
+                    .orElseThrow(() -> new RuntimeException("Category not found"));
+        }
 
         Movement movement = movementMapper.toEntity(data);
 
@@ -67,11 +79,7 @@ public class MovementService {
     }
 
     public List<Map<String, Object>> getLast6Months(Long userId, String type){
-
-        var teste = movementRepository.sumLast6MonthsByType(userId, type);
-        System.out.println("?>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-        System.out.println(teste);
-        return teste;
+        return movementRepository.sumLast6MonthsByType(userId, type);
     }
 
     public Page<MovementResponseDTO> findAllFilter(MovementFilterDTO filter, Pageable pageable){
