@@ -1,4 +1,5 @@
 import { authService } from "@/services/authService";
+import { getExpiresAtFromToken } from "@/utils/getExpiresAtFromToken";
 import {create} from "zustand";
 import { persist } from "zustand/middleware";
 
@@ -31,7 +32,7 @@ export const useAuthStore = create<AuthState>()(
 
         try {
           const data = await authService.login(email, password);
-
+          console.log(data.expiresIn)
           set({
             user: data.user,
             token: data.token,
@@ -51,13 +52,13 @@ export const useAuthStore = create<AuthState>()(
         try {
           
           const user = await authService.getUserForGoogle(token);
-          console.log(token)
-          console.log(user)
-  
+          
+          const expiresIn = getExpiresAtFromToken(token);
+          console.log("ExpiresIn", expiresIn)
           set({
             user: user,
             token: token,
-            expiresAt: "2025-12-10T07:46:17Z",
+            expiresAt: expiresIn,
             loading: false,
           });
 

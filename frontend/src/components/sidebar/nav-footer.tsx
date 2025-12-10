@@ -21,9 +21,23 @@ import {
 } from "@tabler/icons-react"
 
 import { useSidebar } from "@/components/ui/sidebar"
+import { useNavigate } from "react-router-dom"
+import { useAuthStore } from "@/stores/authStore"
 
 export function NavFooter() {
+  const logout = useAuthStore((state) => state.logout)
+  const navigate = useNavigate();
   const { isMobile } = useSidebar()
+
+  const handleLogout = () => {
+    try {
+      logout()
+      navigate("/login")
+    } catch (error) {
+      console.log("Erro no logout")
+    }
+
+  }
 
   return (
     <SidebarMenu>
@@ -71,7 +85,10 @@ export function NavFooter() {
 
             <DropdownMenuSeparator />
 
-            <DropdownMenuItem className="gap-2 text-red-600 focus:text-red-600">
+            <DropdownMenuItem 
+              className="gap-2 text-red-600 focus:text-red-600"
+              onClick={handleLogout}
+            >
               <IconLogout className="size-4" />
               Logout
             </DropdownMenuItem>
