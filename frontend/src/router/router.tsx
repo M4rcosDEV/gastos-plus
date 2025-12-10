@@ -5,6 +5,7 @@ import Accounts from "@/pages/Accounts";
 import Categories from "@/pages/Categories";
 import Login from "@/pages/auth/Login";
 import { authMiddleware } from "@/stores/middlewares/authMiddleware";
+import OAuthSuccess from "@/pages/auth/OAuthSuccess";
 
 const router = createBrowserRouter([
   {
@@ -28,6 +29,10 @@ const router = createBrowserRouter([
   { 
     path: "/login",
     Component: Login
+  },
+  {
+    path: "/oauth-success",
+    Component: OAuthSuccess,
   }
 ]);
 

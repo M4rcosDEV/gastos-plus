@@ -70,6 +70,26 @@ export default function Login() {
           >
             {loading ? "Entrando..." : "Entrar"}
           </button>
+          <div className="flex items-center gap-2 my-2">
+            <div className="flex-1 h-px bg-gray-300" />
+            <span className="text-sm text-gray-500">ou</span>
+            <div className="flex-1 h-px bg-gray-300" />
+          </div>
+
+
+          <button
+            onClick={() => {
+            window.location.href = "http://localhost:8080/oauth2/authorization/google";
+          }}
+            className="w-full flex items-center justify-center gap-2 border py-2 rounded-md hover:bg-gray-100 transition"
+          >
+            <img
+              src="https://www.svgrepo.com/show/355037/google.svg"
+              alt="Google"
+              className="w-5 h-5"
+            />
+            Entrar com Google
+          </button>
         </div>
       </div>
     </div>

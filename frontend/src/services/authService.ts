@@ -11,5 +11,14 @@ export const authService = {
             const message = error.response?.data?.message || "Error when logging in";
             throw new Error(message);
         }
+    },
+    async getUserForGoogle(token: string) {
+        const response = await api.get("/auth/current-user", {
+            headers: {
+                Authorization: `Bearer ${token}`
+            }
+        });
+
+        return response.data;
     }
 }

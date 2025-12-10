@@ -10,6 +10,7 @@ type AuthState = {
 
     setAuthenticatedUser: (user: any) => void;
     login: (email: string, password: string) => Promise<boolean>;
+    loginWithToken: (token: string) => Promise<boolean>;
     logout: () => void;
 };
 
@@ -44,7 +45,29 @@ export const useAuthStore = create<AuthState>()(
           throw error;
         }
       },
+      loginWithToken: async (token: string) => {
+        set({ loading: true });
 
+        try {
+          
+          const user = await authService.getUserForGoogle(token);
+          console.log(token)
+          console.log(user)
+  
+          set({
+            user: user,
+            token: token,
+            expiresAt: "2025-12-10T07:46:17Z",
+            loading: false,
+          });
+
+          return true;
+        } catch (error) {
+          console.error("Falha ao logar com token", error);
+
+          throw error;
+        }
+      },
       logout: () => {
         set({
           user: null,

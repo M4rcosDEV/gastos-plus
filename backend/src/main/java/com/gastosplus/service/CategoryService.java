@@ -28,10 +28,6 @@ public class CategoryService {
 
         List<Category> categories = categoryRepository.findAllByUserId(user.getId());
 
-        if(categories.isEmpty()){
-            throw new RuntimeException("No category entry for this user.");
-        }
-
         return categories.stream()
                 .map(c -> new CategoryDTO(
                         c.getId(),
