@@ -1,9 +1,10 @@
 package com.gastosplus.controller;
 
+import com.gastosplus.dto.movement.MonthlyComparisonDTO;
 import com.gastosplus.dto.movement.CreateMovementDTO;
 import com.gastosplus.dto.movement.MovementFilterDTO;
 import com.gastosplus.dto.movement.MovementResponseDTO;
-import com.gastosplus.entity.Movement;
+import com.gastosplus.entity.User;
 import com.gastosplus.service.MovementService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -34,6 +36,21 @@ public class MovementController {
     @GetMapping("/last-months")
     public ResponseEntity<?> lastMonths(@RequestParam Long userId, @RequestParam String type){
         return ResponseEntity.ok(movementService.getLast6Months(userId, type));
+    }
+
+    @GetMapping("/balance/month")
+    public ResponseEntity<MonthlyComparisonDTO> getMonthBalance(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(movementService.getMonthBalanceTotal(user.getId()));
+    }
+
+    @GetMapping("/income/month")
+    public ResponseEntity<MonthlyComparisonDTO> getMonthIncome(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(movementService.getIncome(user.getId()));
+    }
+
+    @GetMapping("/expense/month")
+    public ResponseEntity<MonthlyComparisonDTO> getMonthExpense(@AuthenticationPrincipal User user){
+        return ResponseEntity.ok(movementService.getExpense(user.getId()));
     }
 
     @PostMapping

@@ -8,24 +8,41 @@ import { ColorPickerCircle } from "../../color-picker/color-picker-circle"
 import IconSelector from "@/components/icons/icon-picker"
 import { categoryService } from "@/services/categoryService"
 import { toast } from "sonner"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { Category } from "@/interfaces/Category"
 
 interface DialogAddCategory{
     open: boolean
     onOpenChange: (open:boolean) => void
-    onCreated?: () => void
 }
 
 interface ErrorValidate {
     categoryName?: string;
 }
 
-export function DialogAddCategory({ open, onOpenChange, onCreated }: DialogAddCategory) {
- 
+export function DialogAddCategory({ open, onOpenChange}: DialogAddCategory) {
+  const queryClient = useQueryClient();
+
   const [categoryName, setCategoryName] = useState<string>("")
   const [icon, setIcon] = useState<string | null>(null)
   const [color, setColor] = useState<string>("#000000")
   const [observacao, setObservacao] = useState<string>("")
 
+  const createCategoryMutation = useMutation({
+    mutationFn: (payload: Category) => {
+        return categoryService.createCategory(payload)
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["categories"] });
+       
+        toast.success("Categoria criada com sucesso!");
+        closeDialog();
+    },
+    onError: (error:any) => {
+        console.error("Error creating category:", error)
+        toast.error(error.message || "Erro ao criar categoria.");
+    }
+  })
 
   const [errorValidate, setErrorValidate] = useState<ErrorValidate>({})
   
@@ -41,28 +58,14 @@ export function DialogAddCategory({ open, onOpenChange, onCreated }: DialogAddCa
     setErrorValidate(errors)
     if (Object.keys(errors).length > 0) return
 
-    const payload = {
+    const payload: Category = {
       name: categoryName,
       icon: icon || undefined,
       color: color || undefined,
       observacao: observacao || undefined,
     }
 
-    try {
-      // Chamar o serviço para criar a categoria
-      await categoryService.createCategory(payload)
-      if (onCreated) {
-        onCreated?.();
-      }
-      console.log(payload)
-      toast.success("Conta criada com sucesso!");
-      closeDialog()
-    } catch (error:any) { 
-      console.error("Error creating category:", error)
-      toast.error(error.message || "Erro ao criar categoria.");
-    }
-
-
+    createCategoryMutation.mutate(payload)
   }
 
   const closeDialog = () => {

@@ -1,4 +1,4 @@
-import { CardsDashboard } from "@/components/cards/cards-dashboard";
+import { CardsDashboard } from "@/components/cards/dashboard/cards-dashboard";
 import { ChartAreaExpense } from "@/components/charts/chart-area-expense";
 import { ChartAreaIncome } from "@/components/charts/chart-area-income";
 

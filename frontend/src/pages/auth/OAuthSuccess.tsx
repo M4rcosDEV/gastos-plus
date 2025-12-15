@@ -7,23 +7,25 @@ export default function OAuthSuccess() {
   const navigate = useNavigate();
 
   const loginWithToken = useAuthStore((state) => state.loginWithToken);
+  const logout = useAuthStore((state) => state.logout);
 
   useEffect(() => {
     const token = searchParams.get("token");
-
+    console.log(token)
     if (!token) {
       navigate("/login");
       return;
     }
 
     const loginWithGoogle = async() =>{
+      logout();
       try {
         await loginWithToken(token)
         navigate("/")
         console.log("sucesso")
       } catch (error) {
         navigate("/login")
-        console.log("error")
+        console.log(error)
       }
     }
 

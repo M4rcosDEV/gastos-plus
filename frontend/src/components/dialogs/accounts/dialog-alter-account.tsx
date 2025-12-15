@@ -9,6 +9,7 @@ import { ColorPickerCircle } from "../../color-picker/color-picker-circle"
 import { accountService } from "@/services/accountService"
 import { toast } from "sonner";
 import type { Account } from "@/interfaces/Account"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface DialogAlterAccount{
     open: boolean
@@ -17,23 +18,48 @@ interface DialogAlterAccount{
     onChange?: () => void
 }
 
+type AlterAccountPayload = {
+  id: string;
+  payload: Account;
+};
+
 interface ErrorValidate {
     accountName?: string;
     balance?: boolean;
 }
 
-export function DialogAlterAccount({ open, data , onOpenChange,  onChange }: DialogAlterAccount) {
+export function DialogAlterAccount({ open, data , onOpenChange}: DialogAlterAccount) {
+    const queryClient = useQueryClient();
+    
     const [accountName, setAccountName] = useState<string>("");
     const [avatar, setAvatar] = useState<string>("");
     const [balance, setBalance] = useState<number>(0);
     const [color, setColor] = useState<string>("#000000");
-    const [observacao, setObservacao] = useState<string>("");
+    const [observation, setObservation] = useState<string>("");
 
     const [errorValidate, setErrorValidate] = useState<ErrorValidate>({});
     
-    const handleChange = async() =>{
-        const errors: ErrorValidate = {};
+    const alterAccountMutation = useMutation({
+        mutationFn: ({id, payload}:AlterAccountPayload) => {
+            return accountService.update(id, payload)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["accounts"] });
+            
+            toast.success("Conta alterada com sucesso!");
+            closeDialog();
+        },
+        onError: (error:any) => {
+            console.log(error)
+            toast.error(error.message || "Erro ao alterar conta.");
+        }
+    })
 
+    
+    const handleChange = async() =>{
+        console.log(data)
+        const errors: ErrorValidate = {};
+        
         if (accountName.trim() === "") {
             errors.accountName = "required";
         } else if (accountName.length > 20) {
@@ -53,23 +79,15 @@ export function DialogAlterAccount({ open, data , onOpenChange,  onChange }: Dia
             balance: Number(balance),
             color: color || undefined,
             avatar: avatar || undefined,
-            observacao: observacao || undefined,
+            observation: observation || undefined,
         };
 
-        try {
-            await accountService.update(data!.id!, payload);
-            if(onChange){
-                onChange?.();
-            }
-
-            toast.success("Conta alterada com sucesso!");
-        } catch (error:any) {
-            toast.error(error.message || "Erro ao alterar conta.");
-        }
-
-        closeDialog();
+        alterAccountMutation.mutate({
+            id: data!.id!,
+            payload
+        });
     }
-
+    
     const closeDialog = () => {
         onOpenChange(false);
         resetForm();
@@ -119,6 +137,7 @@ export function DialogAlterAccount({ open, data , onOpenChange,  onChange }: Dia
                     id="accountName" 
                     type="text" 
                     placeholder="Ex: Nubank, Inter,  MercadoPago..." 
+                    disabled = {data?.accountName === "Carteira"? true : false}
                     value={accountName}
                     onChange={e => setAccountName(e.target.value)}
                     className={errorValidate.accountName ? "border-red-500 focus-visible:ring-red-500" : ""}
@@ -176,8 +195,8 @@ export function DialogAlterAccount({ open, data , onOpenChange,  onChange }: Dia
             <Textarea 
                 id="obs"
                 placeholder="Informações adicionais sobre essa conta" 
-                value={observacao}
-                onChange={e => setObservacao(e.target.value)}
+                value={observation}
+                onChange={e => setObservation(e.target.value)}
             />
             </div>
 

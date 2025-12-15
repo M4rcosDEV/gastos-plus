@@ -11,13 +11,14 @@ import { SelectCategory } from "@/components/selects/select-category"
 import { SelectPaymentMethod } from "@/components/selects/select-payment-method"
 import { Plus } from "lucide-react"
 import { SelectAccount } from "@/components/selects/select-account"
-import { useMovementStore } from "@/stores/movementStore"
 import { movementService } from "@/services/movementService"
 import type { MovementType } from "@/types/movementType.enum"
 import { toast } from "sonner"
 import type { PaymentMethod } from "@/types/paymentMethod.enum"
 import type { MovementPayload } from "@/interfaces/movement"
 import { ScrollArea } from "@/components/ui/scroll-area"
+import { normalizeCurrency } from "@/utils/normalizeCurrency"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 interface DialogAddMovements{
     open: boolean
@@ -25,19 +26,44 @@ interface DialogAddMovements{
 }
 
 export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
+    const queryClient = useQueryClient();
+    
     const [description, setDescription] = useState<string>("");  
     const [account, setAccount] = useState<string>();
     const [observation, setObservation] = useState<string>("");
 
-    const [value, setValue] = useState<number | null>(null);
+    const [value, setValue] = useState<string>("");
     const [category, setCategory] = useState<number>();
     const [movementDate, setMovementDate] = useState<Date>()
     const [typeMovement, setTypeMovement] = useState<MovementType>();
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>();
 
+    const createMovementMutation = useMutation({
+        mutationFn: (payload: MovementPayload) => {
+            return movementService.createMovement(payload)
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["chart"] });
+            queryClient.invalidateQueries({ queryKey: ["card"] });
+            
+            toast.success("Movimentação registrada com sucesso");
+            closeDialog();
+        },
+        onError: (error:any) => {
+            console.error("Erro ao salvar:", error);
+            toast.error(error.message ?? "Erro ao salvar movimentação");
+        }
+    })
 
-    const refreshIncome = useMovementStore((state) => state.refreshIncome)
-    const refreshExpense = useMovementStore((state) => state.refreshExpense)
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let val = e.target.value;
+
+        // permite apenas números e vírgula
+        if (!/^[0-9]*,?[0-9]{0,2}$/.test(val)) return;
+
+        setValue(val);
+    };
+
 
     const handleSave = async() => {
 
@@ -65,10 +91,10 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
             toast.error("Conta não preenchida");
             return;
         }
-
+        
         const payload: MovementPayload = {
             description,
-            valueMov: value,
+            valueMov: normalizeCurrency(value),
             dateMov: movementDate.toISOString(),
             typeMov: typeMovement,
             categoryId: category ? category : null,
@@ -77,26 +103,7 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
             observation,
         };
 
-        try {
-            await movementService.createMovement(payload)
-
-            if (typeMovement === 'INCOME') {
-                refreshIncome()
-                
-            } else {
-                refreshExpense()
-            }
-
-            toast.success("Movimentação registrada com sucesso")
-
-            closeDialog();  
-
-        } catch (error:any) {
-            console.error("Erro ao salvar:", error)
-            toast.error(error)
-        }
-
-        console.log(payload)
+        createMovementMutation.mutate(payload);
     }
 
     const closeDialog = () => {
@@ -142,8 +149,8 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
                             id="valor" 
                             type="text" 
                             placeholder="0,00"
-                            value={value ?? ""}
-                            onChange={(e) => setValue(e.target.value ? Number(e.target.value) : null)}
+                            value={value}
+                            onChange={handleChange}
                         />
                     </div>
 

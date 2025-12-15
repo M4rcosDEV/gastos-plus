@@ -48,13 +48,10 @@ export const useAuthStore = create<AuthState>()(
       },
       loginWithToken: async (token: string) => {
         set({ loading: true });
-
+        
         try {
-          
           const user = await authService.getUserForGoogle(token);
-          
           const expiresIn = getExpiresAtFromToken(token);
-          console.log("ExpiresIn", expiresIn)
           set({
             user: user,
             token: token,
@@ -64,8 +61,6 @@ export const useAuthStore = create<AuthState>()(
 
           return true;
         } catch (error) {
-          console.error("Falha ao logar com token", error);
-
           throw error;
         }
       },

@@ -17,11 +17,12 @@ import {
 } from "@/components/ui/input-group"
 import { InfoIcon } from "lucide-react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
+import type { Account } from "@/interfaces/Account"
 
 interface DialogAddAccount{
     open: boolean
     onOpenChange: (open:boolean) => void
-    onCreated?: () => void
 }
 
 interface ErrorValidate {
@@ -29,16 +30,31 @@ interface ErrorValidate {
     balance?: string;
 }
 
-export function DialogAddAccount({ open, onOpenChange, onCreated }: DialogAddAccount) {
- 
+export function DialogAddAccount({ open, onOpenChange}: DialogAddAccount) {
+  const queryClient = useQueryClient();
   const [accountName, setAccountName] = useState<string>("");
   const [avatar, setAvatar] = useState<string>("");
   const [balance, setBalance] = useState<string>("");
   const [color, setColor] = useState<string>("#000000");
-  const [observacao, setObservacao] = useState<string>("");
+  const [observation, setObservation] = useState<string>("");
 
   const [errorValidate, setErrorValidate] = useState<ErrorValidate>({});
   
+  const createAccountMutation = useMutation({
+    mutationFn: (payload: Account) => {
+      return accountService.create(payload)
+    },
+    onSuccess: () => {
+        queryClient.invalidateQueries({ queryKey: ["accounts"] });
+       
+        toast.success("Conta criada com sucesso!");
+        closeDialog();
+    },
+    onError: (error:any) => {
+        toast.error(error.message || "Erro ao criar conta.");
+    }
+  })
+
   const handleSave = async() =>{
     
     const errors: ErrorValidate = {};
@@ -61,25 +77,15 @@ export function DialogAddAccount({ open, onOpenChange, onCreated }: DialogAddAcc
 
     if (Object.keys(errors).length > 0) return;
 
-    const payload = {
+    const payload: Account = {
       accountName: accountName,
       balance: Number(balance),
       color: color || undefined,
       avatar: avatar || undefined,
-      observacao: observacao || undefined,
+      observation: observation || undefined,
     };
 
-    try {
-      await accountService.create(payload);
-      if(onCreated){
-        onCreated?.();
-      }
-      toast.success("Conta criada com sucesso!");
-    } catch (error:any) {
-      toast.error(error.message || "Erro ao criar conta.");
-    }
-
-    closeDialog();
+    createAccountMutation.mutate(payload)
   }
 
   const closeDialog = () => {
@@ -92,7 +98,7 @@ export function DialogAddAccount({ open, onOpenChange, onCreated }: DialogAddAcc
     setAvatar(""); 
     setBalance("");
     setColor("#000000");  
-    setObservacao("");
+    setObservation("");
     setErrorValidate({});
   }
 
@@ -207,8 +213,8 @@ export function DialogAddAccount({ open, onOpenChange, onCreated }: DialogAddAcc
           <Textarea 
             id="obs"
             placeholder="Informações adicionais sobre essa conta" 
-            value={observacao}
-            onChange={e => setObservacao(e.target.value)}
+            value={observation}
+            onChange={e => setObservation(e.target.value)}
           />
         </div>
 

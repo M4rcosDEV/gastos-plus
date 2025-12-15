@@ -8,7 +8,7 @@ interface movementState {
     refreshExpense: () => void
 }
 
-export const useMovementStore = create<movementState>((set) => ({
+export const usMovementStore = create<movementState>((set) => ({
     reloadIncome: 0,
     reloadExpense: 0,
 

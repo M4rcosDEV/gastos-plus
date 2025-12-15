@@ -1,10 +1,11 @@
-import { api } from "./api";
+import { api } from "@/services/api";
 
 interface AccountPayload {
     accountName: string;
     avatar?: string;
     balance: number;
     color?: string;
+    observation?: string
 }
 
 export const accountService = {
@@ -35,8 +36,8 @@ export const accountService = {
             const response = await api.patch(`/accounts/${id}`, payload);
             return response.data;
         }catch (error:any) {
-            const message = error.response?.data || "Error updating account.";
-            throw new Error(message);
+            const message = error.response || "Error updating account.";
+            throw new Error(message.data.message);
         }
     }
 }

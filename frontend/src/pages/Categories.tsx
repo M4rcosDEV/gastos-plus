@@ -1,64 +1,43 @@
-import { DataTable } from "@/components/data-table/data-table";
-import { columns } from "@/components/data-table/columns"
 import type { Category } from "@/interfaces/Category";
 import { Button } from "@/components/ui/button";
-import { PlusCircle, SearchIcon, type LucideIcon } from "lucide-react";
-import { Input } from "@/components/ui/input";
-import type { ColumnFiltersState, VisibilityState } from "@tanstack/react-table";
+import { PlusCircle, SearchIcon} from "lucide-react";
 import { useEffect, useState } from "react";
 import { InputGroup, InputGroupAddon, InputGroupButton, InputGroupInput } from "@/components/ui/input-group";
-import IconSelector from "@/components/icons/icon-picker";
 import { DialogAddCategory } from "@/components/dialogs/categories/dialog-add-category";
 import { categoryService } from "@/services/categoryService";
+import DataTableCategories from "@/components/data-table/data-table-categories";
+import { useQuery } from "@tanstack/react-query";
 
 
 export default function Categories() {
-  const [categories, setCategories] = useState<Category[]>([]);
   const [openAddDialog, setOpenAddDialog] = useState(false);
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
-  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [search, setSearch] = useState<string>("")
 
-  const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
-  const [icon, setIcon] = useState<string | null>(null);
+  const categoriesQuery = useQuery<Category[]>({
+    queryKey: ["categories"],
+    queryFn: categoryService.getCategories
+  });
+
+  const categories = categoriesQuery.data || [];
+
+  const isLoading = categoriesQuery.isLoading;
+
+  const isError = categoriesQuery.isError;
+
+  if(isError) console.log(isError)
   
-  // Pega o valor atual do filtro 'name' (se existir)
-  const nameFilter = columnFilters.find((f: { id: string; }) => f.id === "name")?.value || "";
-
-  const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-      const newValue = event.target.value;
-      if (newValue) {
-          setColumnFilters([{ id: "name", value: newValue }]);
-      } else {
-          // Remove o filtro se o campo estiver vazio
-          setColumnFilters(columnFilters.filter((f: { id: string; }) => f.id !== "name"));
-      }
-  };
-
-  const handleClearSearch = () => {
-      setColumnFilters(columnFilters.filter(f => f.id !== "name"));
-  };
-
-  const handleAddCategory = () => {
-      loadData();
-  };
-  
-  const loadData = async () => {
-    setIsLoading(true); 
-
-    try {
-      const data = await categoryService.getCategories();
-      setCategories(data);
- 
-    } catch (error) {
-      console.error("error loading categories:", error)
-    }finally{
-      setIsLoading(false);
-    }
-  }
+  const filteredCategories = categories.filter(item =>
+    item.name.toLowerCase().includes(search.toLowerCase())
+  );
 
   useEffect(() => {
-    loadData();
-  }, []);
+    const timeout = setTimeout(() => {
+      console.log("Texto digitado (debounced):", search);
+
+    }, 500);
+
+    return () => clearTimeout(timeout);
+  }, [search]);
 
   return (
     <div className="p-8 space-y-6 max-w-7xl mx-auto"> 
@@ -68,6 +47,10 @@ export default function Categories() {
         <div className="flex flex-col sm:flex-row w-full sm:max-w-sm gap-2">
           <InputGroup>
             <InputGroupInput
+              value={search}
+              onChange={
+                (e) => setSearch(e.target.value)
+              }
               placeholder="Search..."
               
             />
@@ -75,7 +58,7 @@ export default function Categories() {
               <SearchIcon />
             </InputGroupAddon>
             <InputGroupAddon align="inline-end">
-              <InputGroupButton onClick={() => console.log("Pesquisar")}>
+              <InputGroupButton>
                 Search
               </InputGroupButton>
             </InputGroupAddon>
@@ -96,15 +79,9 @@ export default function Categories() {
 
       </div>
 
-      {/* Componente principal da Tabela */}
-      <DataTable 
-          columns={columns} 
-          data={categories}
-          create={() => setOpenAddDialog(true)}
-          isLoading={isLoading}
-      />     
-
-      <DialogAddCategory open={openAddDialog} onOpenChange={setOpenAddDialog} onCreated = {handleAddCategory}/>
+      <DataTableCategories categories={filteredCategories} isLoading={isLoading} openCreate={() => setOpenAddDialog(true)}/>
+      
+      <DialogAddCategory open={openAddDialog} onOpenChange={setOpenAddDialog}/>
 
     </div>
   );

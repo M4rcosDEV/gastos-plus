@@ -22,8 +22,8 @@ import { useEffect, useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
 
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover"
-import { movementService } from "@/services/movementService"
-import { useMovementStore } from "@/stores/movementStore"
+import { dashboardService } from "@/services/dashboardService"
+import { useQuery } from "@tanstack/react-query"
 
 export const description = "A simple area chart"
 
@@ -42,27 +42,20 @@ const chartConfig = {
 
 export function ChartAreaIncome() {
   const userId = useAuthStore((state) => state.user?.id)
-  const [chartData, setChartData] = useState<dataResponse[]>([])
   const [monthWin, setMonthWin] = useState<dataResponse>()
   const [fistMonth, setFistMonth] = useState<dataResponse>()
   const [lastMonth, setLastMonth] = useState<dataResponse>()
-  const reloadIncome = useMovementStore((state) => state.reloadIncome)
   
-  useEffect(() => {
-    if(!userId) return 
-    async function loadData() {
-      try {
-        const data = await movementService.getLast6Months(userId, "INCOME")
-        console.log("Grafico recarregado - INCOME")
-        setChartData(data)
-      } catch (error) {
-        console.error("Erro ao carregar gráfico:", error)
-      }
-    }
+  const chartIncomeQuery = useQuery<dataResponse[]>({
+    queryKey: ["chart", "income", userId],
+    queryFn: () => dashboardService.getLast6Months(userId, "INCOME"),
+  });
 
-    loadData()
-    
-  },[userId, reloadIncome])
+  if (chartIncomeQuery.isError) {
+    console.log("Error load chart")
+  }
+
+  const chartData = chartIncomeQuery.data ?? [];
 
   useEffect(() => {
     if (chartData.length === 0) return
@@ -95,8 +88,8 @@ export function ChartAreaIncome() {
             accessibilityLayer
             data={chartData}
             margin={{
-              left: 12,
-              right: 12,
+              left: 13,
+              right: 13,
             }}
           >
             <CartesianGrid vertical={false} />

@@ -76,29 +76,49 @@ public class AccountService {
         User user = (User) auth.getPrincipal();
 
         Account account = accountRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Account not found"));
+                .orElseThrow(() -> new RuntimeException("Conta não encontrada"));
 
-        boolean accountExists = accountRepository
-                .existsByAccountNameIgnoreCaseAndUserId(account.getAccountName(), user.getId());
+        boolean isCarteira = "Carteira".equalsIgnoreCase(account.getAccountName());
+        boolean isTryingToChangeName =
+                dto.accountName() != null &&
+                        !dto.accountName().equalsIgnoreCase(account.getAccountName());
 
-        if ("Carteira".equalsIgnoreCase(dto.accountName())) {
+        // não pode alterar o nome da conta Carteira
+        if (isCarteira && isTryingToChangeName) {
+            throw new RuntimeException("O nome da conta Carteira não pode ser alterado.");
+        }
+
+        // nenhuma conta pode ser renomeada para Carteira
+        if (
+                !isCarteira &&
+                        dto.accountName() != null &&
+                        "Carteira".equalsIgnoreCase(dto.accountName())
+        ) {
             throw new RuntimeException("Este nome é reservado e não pode ser utilizado.");
         }
 
-        boolean nameExists = accountRepository
-                .existsByAccountNameIgnoreCaseAndUserIdAndIdNot(
-                        dto.accountName(),
-                        user.getId(),
-                        id
-                );
+        // nome duplicado (ignorando a própria conta)
+        if (isTryingToChangeName) {
+            boolean nameExists = accountRepository
+                    .existsByAccountNameIgnoreCaseAndUserIdAndIdNot(
+                            dto.accountName(),
+                            user.getId(),
+                            id
+                    );
 
-        if (nameExists) {
-            throw new RuntimeException("Já existe outra conta com esse nome.");
+            if (nameExists) {
+                throw new RuntimeException("Já existe outra conta com esse nome.");
+            }
         }
 
         accountMapper.updateAccountFromDto(dto, account);
-
         accountRepository.save(account);
+    }
+
+    public double getTotalBalance(Long userId){
+
+
+        return 0;
     }
 
     public List<Account> findAllByUserId(Long userId){

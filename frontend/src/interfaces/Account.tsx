@@ -4,4 +4,5 @@ export interface Account{
     avatar?: string
     balance: number
     color?: string
+    observation?: string
 }
