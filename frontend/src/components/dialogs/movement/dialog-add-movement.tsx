@@ -19,6 +19,8 @@ import type { MovementPayload } from "@/interfaces/movement"
 import { ScrollArea } from "@/components/ui/scroll-area"
 import { normalizeCurrency } from "@/utils/normalizeCurrency"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { DialogAddAccount } from "@/components/dialogs/accounts/dialog-add-account"
+import { DialogAddCategory } from "@/components/dialogs/categories/dialog-add-category"
 
 interface DialogAddMovements{
     open: boolean
@@ -28,6 +30,9 @@ interface DialogAddMovements{
 export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
     const queryClient = useQueryClient();
     
+    const [openAddDialogAccount, setOpenAddDialogAccount] = useState(false);
+    const [openAddDialogCategory, setOpenAddDialogCategory] = useState(false);
+
     const [description, setDescription] = useState<string>("");  
     const [account, setAccount] = useState<string>();
     const [observation, setObservation] = useState<string>("");
@@ -174,7 +179,7 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
                             <button
                             type="button"
                             className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
-                            onClick={() => console.log("Criar nova categoria")}
+                            onClick={() => setOpenAddDialogCategory(true)}
                             >
                             <Plus className="h-4 w-4" />
                             </button>
@@ -195,7 +200,7 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
                             <button
                             type="button"
                             className="p-2 rounded-md bg-blue-600 hover:bg-blue-700 text-white"
-                            onClick={() => console.log("Criar nova conta")}
+                            onClick={() => setOpenAddDialogAccount(true)}
                             >
                             <Plus className="h-4 w-4" />
                             </button>
@@ -212,6 +217,8 @@ export function DialogAddMovements({ open, onOpenChange }: DialogAddMovements) {
                     </div>
                 </div>
             </ScrollArea>
+            <DialogAddAccount open={openAddDialogAccount} onOpenChange={setOpenAddDialogAccount}/>
+            <DialogAddCategory open={openAddDialogCategory} onOpenChange={setOpenAddDialogCategory}/>
         </DialogFx>
     )
 }

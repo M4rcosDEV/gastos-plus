@@ -11,31 +11,20 @@ import { useEffect, useState } from "react";
 import type { Account } from "@/interfaces/Account";
 import { accountService } from "@/services/accountService";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
+import { useQuery } from "@tanstack/react-query";
 
 interface SelectAccountProps{
     onChange: (value:string) => void
 }
 
 export function SelectAccount({onChange}:SelectAccountProps) {
-    const [account, setAccount] = useState<Account[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    const accountsQuery = useQuery<Account[]>({
+      queryKey: ["accounts"],
+      queryFn: accountService.getAllAccounts
+    })
 
-    const loadAccounts = async () =>{
-        setIsLoading(true);
-
-        try {
-            const result = await accountService.getAllAccounts();
-            setAccount(result)
-        } catch (error) {
-            console.log(error)
-        }finally{
-            setIsLoading(false);
-        }
-    }
-
-    useEffect(() =>{
-        loadAccounts()
-    }, [])
+    const account = accountsQuery.data || []
+    const isLoading = accountsQuery.isLoading;
 
     return (
         <Select onValueChange={onChange}>
@@ -75,8 +64,6 @@ export function SelectAccount({onChange}:SelectAccountProps) {
                 )
 
             }
-
-
         </Select>
     )
 }

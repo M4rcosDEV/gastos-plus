@@ -11,31 +11,26 @@ import { useEffect, useState } from "react";
 import { categoryService } from "@/services/categoryService";
 import type { Category } from "@/interfaces/Category";
 import { categoryIcons } from "../icons/icons";
+import { useQuery } from "@tanstack/react-query";
 
 interface SelectCategoryProps{
     onChange: (value:number) => void
 }
 
 export function SelectCategory({onChange}:SelectCategoryProps) {
-    const [categories, setCategories] = useState<Category[]>([]);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
+    
+    const categoriesQuery = useQuery<Category[]>({
+        queryKey: ["categories"],
+        queryFn: categoryService.getCategories
+    });
 
-    const loadCategories = async () =>{
-        setIsLoading(true);
+    const categories = categoriesQuery.data || [];
 
-        try {
-            const result = await categoryService.getCategories();
-            setCategories(result)
-        } catch (error) {
-            console.log(error)
-        }finally{
-            setIsLoading(false);
-        }
-    }
+    const isLoading = categoriesQuery.isLoading;
 
-    useEffect(() =>{
-        loadCategories()
-    }, [])
+    const isError = categoriesQuery.isError;
+
+    if(isError) console.log(isError)
 
     return (
         <Select onValueChange={(value) => onChange(Number(value))}>
@@ -55,7 +50,7 @@ export function SelectCategory({onChange}:SelectCategoryProps) {
                             const IconComponent = iconEntry?.icon;
 
                             return (                            
-                                <SelectItem key={index} value={item.id}>
+                                <SelectItem key={index} value={String(item.id)}>
                                     <div className="flex items-center gap-3">
                                     {IconComponent && <IconComponent size={18} color={item.color} />}
                                     {item.name}
