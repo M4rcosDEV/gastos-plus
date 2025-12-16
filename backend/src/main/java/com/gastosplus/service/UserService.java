@@ -4,7 +4,6 @@ import com.gastosplus.dto.user.UserDTO;
 import com.gastosplus.entity.User;
 import com.gastosplus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
