@@ -1,6 +1,5 @@
 package com.gastosplus.service;
 
-import com.gastosplus.dto.account.AccountResponseDTO;
 import com.gastosplus.dto.account.CreateAccountDTO;
 import com.gastosplus.dto.account.UpdateAccountDTO;
 import com.gastosplus.entity.Account;
@@ -11,7 +10,6 @@ import com.gastosplus.enums.TypeMovement;
 import com.gastosplus.mapper.AccountMapper;
 import com.gastosplus.repository.AccountRepository;
 import com.gastosplus.repository.MovementRepository;
-import com.gastosplus.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.Authentication;
@@ -30,8 +28,6 @@ public class AccountService {
     private final MovementRepository movementRepository;
 
     private final AccountMapper accountMapper;
-
-    private final UserRepository userRepository;
 
     public void createAccount(CreateAccountDTO data){
 

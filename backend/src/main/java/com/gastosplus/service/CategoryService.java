@@ -5,9 +5,7 @@ import com.gastosplus.dto.category.CreateCategotyDTO;
 import com.gastosplus.entity.Category;
 import com.gastosplus.entity.User;
 import com.gastosplus.repository.CategoryRepository;
-import com.gastosplus.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -19,8 +17,6 @@ import java.util.List;
 public class CategoryService {
 
     private final CategoryRepository categoryRepository;
-
-    private final UserRepository userRepository;
 
     public List<CategoryDTO> findCategories(){
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
